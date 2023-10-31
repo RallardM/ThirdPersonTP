@@ -5,14 +5,8 @@ using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class VFXManager : MonoBehaviour
 {
-    //[SerializeField]
-    //private GameObject m_hitPSBackground;
-
     [SerializeField]
     private List<GameObject> m_backgroundHits;
-
-    //[SerializeField]
-    //private GameObject m_hitPS3DText;
 
     [SerializeField]
     private List<GameObject> m_3DTextHits;
@@ -29,9 +23,18 @@ public class VFXManager : MonoBehaviour
         return s_instance;
     }
 
-    public VFXManager()
+    private void Awake()
     {
-        s_instance = this;
+        if (s_instance == null)
+        {
+            s_instance = this;
+            //DontDestroyOnLoad(this); // Is already in the DontDestroyOnLoad in the Character assets prefab
+        }
+        else if (s_instance != this)
+        {
+            Debug.LogWarning("VFXManager : Awake() - Attempted to create a second instance of the GameManagerSM singleton!");
+            Destroy(this);
+        }
     }
 
     public void InstantiateVFX(EVFX_Type vfxType, Vector3 pos)

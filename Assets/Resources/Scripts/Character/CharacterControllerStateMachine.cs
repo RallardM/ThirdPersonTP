@@ -42,11 +42,6 @@ public class CharacterControllerStateMachine : BaseStateMachine<CharacterState>,
     public bool OnStunStimuliReceived { get; set; } = false;
     public bool InNonGameplayState { get; internal set; }
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     // Start is called before the first frame update
     protected override void Start()
     {

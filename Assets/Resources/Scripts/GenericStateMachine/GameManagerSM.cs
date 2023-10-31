@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using UnityEngine.Timeline;
 using UnityEngine.Playables;
 using Cinemachine;
 
@@ -9,6 +8,9 @@ public class GameManagerSM : BaseStateMachine<IState>
 {
     [field:SerializeField]
     public CharacterControllerStateMachine CharacterControllerStateMachine { get; private set; }
+
+    [field: SerializeField]
+    public GameObject MainCharacter { get; set; }
 
     [field: SerializeField]
     public PlayableDirector IntroTimeline { get; set; }
@@ -40,9 +42,19 @@ public class GameManagerSM : BaseStateMachine<IState>
         return s_instance;
     }
 
-    public GameManagerSM()
+    protected override void Awake()
     {
-        s_instance = this;
+        base.Awake();
+
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
+        else if (s_instance != this)
+        {
+            Debug.LogWarning("GameManagerSM : Awake() - Attempted to create a second instance of the GameManagerSM singleton!");
+            Destroy(this);
+        }
     }
 
     // TODO: Try to integrate this into the state machine
@@ -50,6 +62,7 @@ public class GameManagerSM : BaseStateMachine<IState>
     protected override void Start()
     {
         base.Start();
+        DontDestroyOnLoad(this);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         //Cursor.lockState = CursorLockMode.Confined;
@@ -80,10 +93,19 @@ public class GameManagerSM : BaseStateMachine<IState>
             Application.Quit();
             //UnityEditor.EditorApplication.isPlaying = false;
         }
-        else if (Input.GetKeyDown(KeyCode.N))
+        else if (Input.GetKeyDown(KeyCode.M))
         {
+            // Teleport player to the beginning of the next level
+            MainCharacter.transform.position = new Vector3(0, 0, 0);
+
             // Cheat code to skip to next level
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            CharacterControllerStateMachine.OnGameManagerStateChange(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.N))
+        {
+            // Cheat code to reset level
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         else if (Input.GetKeyDown(KeyCode.P))
         {
@@ -106,7 +128,11 @@ public class GameManagerSM : BaseStateMachine<IState>
                 IntroDollyTracks.SetActive(false);
                 GameplayVirtualCamera.SetActive(true);
                 CharacterControllerStateMachine.OnGameManagerStateChange(false);
+                return;
             }
+
+            // If there is no cinematic intro switch the gameplay state
+            CharacterControllerStateMachine.OnGameManagerStateChange(!CharacterControllerStateMachine.InNonGameplayState);
         }
     }
 
