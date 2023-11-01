@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class VFXManager : MonoBehaviour
 {
@@ -10,6 +8,18 @@ public class VFXManager : MonoBehaviour
 
     [SerializeField]
     private List<GameObject> m_3DTextHits;
+
+    [SerializeField]
+    private GameObject m_explosionPrefab;
+
+    [SerializeField]
+    private Transform m_explosionPosition;
+
+    [SerializeField]
+    private CameraShake m_cameraShake;
+
+    [SerializeField]
+    private float m_explosionStrenght = 10.0f;
 
     private static VFXManager s_instance;
 
@@ -28,7 +38,7 @@ public class VFXManager : MonoBehaviour
         if (s_instance == null)
         {
             s_instance = this;
-            //DontDestroyOnLoad(this); // Is already in the DontDestroyOnLoad in the Character assets prefab
+            DontDestroyOnLoad(this);
         }
         else if (s_instance != this)
         {
@@ -37,7 +47,7 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    public void InstantiateVFX(EVFX_Type vfxType, Vector3 pos)
+    public void InstantiateVFX(EVFX_Type vfxType, Vector3 pos, float cameraShakePower)
     {
         int randomIndex = 0;
         switch (vfxType)
@@ -46,16 +56,30 @@ public class VFXManager : MonoBehaviour
                 randomIndex = Random.Range(0, m_3DTextHits.Count);
                 Instantiate(m_backgroundHits[randomIndex], pos, Quaternion.identity, transform);
                 Instantiate(m_3DTextHits[randomIndex], pos, Quaternion.identity, transform);
+                m_cameraShake.ShakeCamera(cameraShakePower);
+                break;
+
+            case EVFX_Type.Explosion:
+                Instantiate(m_explosionPrefab, pos, Quaternion.identity, transform);
+                m_cameraShake.ShakeCamera(cameraShakePower);
                 break;
 
             default:
+                Debug.LogError("VFXManager : InstantiateVFX() - Unknown VFX type!");
                 break;
         }
+    }
+
+    // The explosion only plays at the end of the intro animation
+    public void SetExplosion()
+    {
+        InstantiateVFX(EVFX_Type.Explosion, m_explosionPosition.position, m_explosionStrenght);
     }
 }
 
 public enum EVFX_Type
 {
     Hit,
+    Explosion,
     count
 }

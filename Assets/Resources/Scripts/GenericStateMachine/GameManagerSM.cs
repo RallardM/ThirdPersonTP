@@ -119,6 +119,11 @@ public class GameManagerSM : BaseStateMachine<IState>
                 m_musicTrack.Play();
             }
         }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            // Set Explosion
+            VFXManager.GetInstance().SetExplosion();
+        }
         else if (Input.GetKeyDown(KeyCode.G))
         {
             // Cancel intro cinematic timeline

@@ -18,6 +18,12 @@ public class PlayerDetectionAI : MonoBehaviour
         }
 
         transform.LookAt(m_playerTransform.position);
+
+        if (m_enemyAnimator == null)
+        {
+            return;
+        }
+
         m_enemyAnimator.SetTrigger("Attack");
     }
 
