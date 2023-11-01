@@ -1,9 +1,6 @@
 // Source : https://www.youtube.com/watch?v=luSVUPU6bK0
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using System.Threading;
 
 public class CameraShake : MonoBehaviour
 {

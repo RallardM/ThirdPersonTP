@@ -42,11 +42,6 @@ public class GettingHitState : CharacterState
 
     public override bool CanExit()
     {
-        if (m_currentStateTimer <= 0.0f && m_stateMachine.Health == m_stateMachine.PreviousHealth)
-        {
-            //Debug.Log("Can exit Getting Hit state ?: " + m_currentStateTimer);
-        }
-
         return m_currentStateTimer <= 0.0f && m_stateMachine.Health == m_stateMachine.PreviousHealth;
     }
 }

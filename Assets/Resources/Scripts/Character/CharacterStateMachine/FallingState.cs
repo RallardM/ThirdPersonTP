@@ -31,7 +31,6 @@ public class FallingState : CharacterState
 
         // Register velocity if it is greater than the previous one
         m_fallingvelocity = Mathf.Abs(m_stateMachine.RB.velocity.y);
-        //Debug.Log("Current falling velocity: " + Mathf.Abs(m_stateMachine.RB.velocity.y));
     }
 
     public override bool CanEnter(IState currentState)

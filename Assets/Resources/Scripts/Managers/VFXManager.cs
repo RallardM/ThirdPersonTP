@@ -70,7 +70,6 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    // The explosion only plays at the end of the intro animation
     public void SetExplosion()
     {
         InstantiateVFX(EVFX_Type.Explosion, m_explosionPosition.position, m_explosionStrenght);

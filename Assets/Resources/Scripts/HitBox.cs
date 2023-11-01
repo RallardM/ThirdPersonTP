@@ -1,6 +1,4 @@
-using Cinemachine;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class HitBox : MonoBehaviour
@@ -45,17 +43,6 @@ public class HitBox : MonoBehaviour
             return;
         }
 
-        //if (Input.GetKeyDown(KeyCode.I))
-        //{
-        //    if (m_impulseSource == null)
-        //    {
-        //        return;
-        //    }
-
-        //    var intensity = Random.Range(1.0f, 4.0f);
-        //    m_impulseSource.GenerateImpulse(intensity);
-        //}
-
         // Since the rigidbody is on the squeletton, we need to compute the velocity ourselves
         Vector3 currentPosition = m_hitboxRigidBody.transform.position;
         Vector3 velocity = (currentPosition - m_previousPosition) / Time.deltaTime;
@@ -65,16 +52,12 @@ public class HitBox : MonoBehaviour
 
     protected void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("Collider enter : " + collider.name);
         var otherHitBox = collider.GetComponent<HitBox>();
         if (otherHitBox == null) return;
 
         // Other collider else is an HitBox
         if (CanHitOther(otherHitBox))
         {
-            Debug.Log("Can hit other : " + collider.name);
-            //Debug.Log("Self velocity : " + m_globalVelocity.magnitude);
-            //Debug.Log("otherHitBox velocity : " + otherHitBox.m_globalVelocity.magnitude);
             VFXManager.GetInstance().InstantiateVFX(EVFX_Type.Hit, collider.ClosestPoint(transform.position), m_globalVelocity.magnitude);
             m_audioController.PlaySound(ESoundType.Slap);
         }

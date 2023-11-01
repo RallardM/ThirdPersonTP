@@ -32,7 +32,6 @@ public class SceneTransitionState : IState
 
     public void OnStart()
     {
-        //Debug.Log("SceneTransitionState OnStart()"); // TODO: Remove after debugging
     }
 
     public void OnUpdate()
