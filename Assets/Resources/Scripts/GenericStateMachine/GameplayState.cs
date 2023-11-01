@@ -14,6 +14,8 @@ public class GameplayState : IState
     {
         Debug.Log("CanEnter GameplayState " + (GameManagerSM.GetInstance().DesiredState == this));
         return GameManagerSM.GetInstance().DesiredState == this;
+        //Debug.Log("CanEnter GameplayState " + (GameManagerSM.GetInstance().DesiredState == currentState));
+        //return GameManagerSM.GetInstance().DesiredState == currentState;
     }
 
     public bool CanExit()
@@ -32,7 +34,7 @@ public class GameplayState : IState
             brain.ActiveVirtualCamera?.VirtualCameraGameObject.SetActive(false);
         }
 
-        m_camera.gameObject.SetActive(true); 
+        m_camera.gameObject.SetActive(true);
         GameManagerSM.GetInstance().DesiredState = null;
         GameManagerSM.GetInstance().CharacterControllerStateMachine.OnGameManagerStateChange(false);
     }
@@ -45,6 +47,13 @@ public class GameplayState : IState
 
     public void OnFixedUpdate()
     {
+        //Debug.Log("GameplayState : OnFixedUpdate() : Enters OnFixedUpdate()");
+        if (Input.GetMouseButtonDown(1))
+        {
+            //Debug.Log("Bullet time activated");
+            // Activate the bullet time
+            GameManagerSM.GetInstance().ActivateBulletTime();
+        }
     }
 
     public void OnStart()

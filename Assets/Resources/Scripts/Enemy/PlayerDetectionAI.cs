@@ -33,7 +33,7 @@ public class PlayerDetectionAI : MonoBehaviour
         // Early return if not layer 6 (Player)
         if (other.gameObject.layer != 6)
         {
-            Debug.Log("Not player");
+            //Debug.Log("Not player");
             return;
         }
 
@@ -45,7 +45,7 @@ public class PlayerDetectionAI : MonoBehaviour
     {
         if (other.gameObject.layer != 6)
         {
-            Debug.Log("Not player");
+            //Debug.Log("Not player");
             return;
         }
 

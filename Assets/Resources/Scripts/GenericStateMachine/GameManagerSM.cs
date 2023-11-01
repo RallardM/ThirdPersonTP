@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.Playables;
 using Cinemachine;
+using System;
 
 public class GameManagerSM : BaseStateMachine<IState>
 {
@@ -24,8 +25,19 @@ public class GameManagerSM : BaseStateMachine<IState>
     [SerializeField]
     protected Camera m_mainCamera;
 
+    //Exposed slider 0 to 1 m_timeSlownValue
+    [SerializeField]
+    [Range(0.0f, 1.0f)] private float m_timeSlownValue = 0.5f;
+    private float m_fixedDeltaTime = 0.02f;
+    private float m_maxFixedDeltaTime = 1.0f;
+
+
     [SerializeField]
     private AudioSource m_musicTrack;
+
+    private const float BULLET_TIME_DURATION = 1.0f;
+    private float m_bulletTimeTimer = 0.0f;
+    private bool m_isBulletTimeActive = false;
 
     public IState DesiredState { get; set; } = null;
     //public bool CanPlayerMove { get; set; } = true;
@@ -86,6 +98,35 @@ public class GameManagerSM : BaseStateMachine<IState>
         }
     }
 
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        FixedSlownTime();
+    }
+
+    // Source : https://youtu.be/9-5kBGlpwhA
+    // Source : https://youtu.be/0VGosgaoTsw
+    private void FixedSlownTime()
+    {
+        if (m_isBulletTimeActive == false)
+        {
+            Time.timeScale += (1f / BULLET_TIME_DURATION) * Time.unscaledDeltaTime;
+            Time.timeScale = Mathf.Clamp(Time.timeScale, 0f, 1f);
+            return;
+        }
+
+        m_bulletTimeTimer -= Time.fixedDeltaTime;
+        if (m_bulletTimeTimer <= 0.0f)
+        {
+            m_isBulletTimeActive = false;
+            Debug.Log("Bullet time deactivated");
+        }
+
+        Time.timeScale = m_timeSlownValue;
+        Time.fixedDeltaTime = Time.timeScale * m_fixedDeltaTime;
+    }
+
     private void GameplayInputs()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -132,6 +173,7 @@ public class GameManagerSM : BaseStateMachine<IState>
                 IntroTimeline.Stop();
                 IntroDollyTracks.SetActive(false);
                 GameplayVirtualCamera.SetActive(true);
+                DesiredState = m_possibleStates[1];
                 CharacterControllerStateMachine.OnGameManagerStateChange(false);
                 return;
             }
@@ -162,5 +204,14 @@ public class GameManagerSM : BaseStateMachine<IState>
         Debug.Log("GameManagerSM : ActivateGameplayState()");
         // Set the desired state to the gameplay state
         DesiredState = m_possibleStates[1];
+    }
+
+    public void ActivateBulletTime()
+    {
+        if (m_isBulletTimeActive == false)
+        {
+            m_isBulletTimeActive = true;
+            m_bulletTimeTimer = BULLET_TIME_DURATION;
+        }
     }
 }
